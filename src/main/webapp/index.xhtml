@@ -13,27 +13,34 @@
         <h:form>
             <h:inputHidden value="#{usuarioController.usuario.id}" />
             <h:panelGrid id="panel" columns="2" border="0" cellpadding="10" cellspacing="1">
+
+                <f:facet name = "header">
+                    <h:outputText value = "Novo Usuário" rendered="#{usuarioController.usuario.id == null || usuarioController.usuario.id == 0}" />
+                    <h:outputText value = "Alterar Usuário `#{usuarioController.usuario.nome}`" rendered="#{usuarioController.usuario.id > 0}" />
+                </f:facet>
+
                 <h:outputLabel value = "Nome" for="i-nome"/>
                 <h:inputText id="i-nome" value="#{usuarioController.usuario.nome}"/>
-                
+
                 <h:outputLabel value = "Login" for="i-login"/>
-                <h:inputText id="i-login" value="#{usuarioController.usuario.login}"/>
-                
+                <h:inputText id="i-login" value="#{usuarioController.usuario.login}"/><br />
+                <h:message for="i-login" />
+
                 <h:outputLabel value = "Idade" for="i-idade"/>
-                <h:inputText id="i-idade" value="#{usuarioController.usuario.idade}"/>
-                
+                <h:inputText id="i-idade" converter="javax.faces.Integer" value="#{usuarioController.usuario.idade}"/>
+
                 <h:outputLabel value = "Senha" for="i-senha"/>
                 <h:inputText id="i-senha" value="#{usuarioController.usuario.senha}"/>
-                
+
                 <f:facet name = "footer">
                     <h:panelGroup style = "display:block; text-align:center">
                         <h:commandButton id = "submit" value = "Salvar" action="#{usuarioController.save()}"/>
                     </h:panelGroup>
                 </f:facet>
             </h:panelGrid>
-                
+
         </h:form>
-        
+
         <h2>Lista de Usuários</h2>
         <h:dataTable value="#{usuarioController.list}" var="item" border="1" rendered="#{usuarioController.list.size() > 0}">
             <h:column>
@@ -48,6 +55,22 @@
                 <f:facet name="header"><h:outputText value="Idade"/></f:facet>
                 <h:outputText value="#{item.idade}"/>
             </h:column>
+
+            <h:column>
+                <f:facet name="header"><h:outputText value="Editar"/></f:facet>
+                <h:form>
+                    <h:commandLink value="Editar" action="#{usuarioController.edit(item.id)}" styleClass="btn btn-sm"/>
+                </h:form>                            
+            </h:column>
+
+            <h:column>
+                <f:facet name="header"><h:outputText value="Excluir"/></f:facet>
+                <h:form>
+                    <h:commandLink value="Excluir" onclick="if (!confirm('Você tem certeza que deseja excluir o usuário?')) {
+                                return false;
+                            }" action="#{usuarioController.delete(item.id)}" styleClass="btn btn-sm"/>
+                </h:form>
+            </h:column>     
         </h:dataTable>
     </h:body>
 </html>

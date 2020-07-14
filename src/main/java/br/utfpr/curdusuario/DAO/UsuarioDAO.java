@@ -40,18 +40,20 @@ public class UsuarioDAO {
     }
     
     public void delete(Integer id) {
-        Usuario user = getUsuarioById(id);
-        if (user != null) {
-            lUsuario.remove(user);
-        }
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        session.createQuery("delete Usuario where id=:id").setParameter("id", id).executeUpdate();
+        session.getTransaction().commit();
+        session.close();
     }
     
-    public void update(Usuario entity, Integer id) {
-        Usuario user = getUsuarioById(id);
-        user.setLogin(entity.getLogin());
-        user.setNome(entity.getNome());
-        user.setSenha(entity.getSenha());
-        user.setIdade(entity.getIdade());
+    public void update(Usuario usuario) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        
+        session.update(usuario);
+        session.getTransaction().commit();
+        session.close();
     }
     
     public Usuario getUsuarioById(Integer id) {
@@ -62,4 +64,30 @@ public class UsuarioDAO {
         }
         return null;
     }
+
+    public Usuario getDisciplinaById(Integer id) {
+        Session session = sessionFactory.openSession();
+        
+        session.beginTransaction();
+        Usuario usuario = (Usuario) session.createQuery("from Usuario where id=:id").setParameter("id", id).uniqueResult();
+        session.getTransaction().commit();
+        session.close();
+        
+        return usuario;
+    }
+    
+    public boolean checkLoginExists(Integer id, String login) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        List<Usuario> result = session
+                .createQuery("from Usuario where login=:login AND id<>:id order by login asc")
+                .setParameter("id", id)
+                .setParameter("login", login)
+                .list();
+        session.getTransaction().commit();
+        session.close();
+        
+        return result.isEmpty() ? false : true;
+    }
+
 }
