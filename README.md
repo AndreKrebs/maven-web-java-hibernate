@@ -1,0 +1,1 @@
+# maven-web-java-hibernate
