@@ -76,12 +76,25 @@ public class UsuarioDAO {
         return usuario;
     }
     
-    public boolean checkLoginExists(Integer id, String login) {
+    public boolean checkLoginExistsAnotherId(Integer id, String login) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         List<Usuario> result = session
                 .createQuery("from Usuario where login=:login AND id<>:id order by login asc")
                 .setParameter("id", id)
+                .setParameter("login", login)
+                .list();
+        session.getTransaction().commit();
+        session.close();
+        
+        return result.isEmpty() ? false : true;
+    }
+    
+    public boolean checkLoginExists(String login) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        List<Usuario> result = session
+                .createQuery("from Usuario where login=:login order by login asc")
                 .setParameter("login", login)
                 .list();
         session.getTransaction().commit();
